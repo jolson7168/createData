@@ -1,0 +1,33 @@
+{
+	"numThings":300, 
+	"numDays":1065, 
+	"startDate":"Jan 01, 2016",
+	"frequency": 3, 
+	"probMiss":5,
+    "probDuration":300,
+    "probAnswerDuration":10,
+	"items":[
+		{"id":1,"choices":[1,2,3,4,5],"multi":"N", "responseMin":1,"responseMax":8},
+		{"id":2,"choices":[1,2,3,4,5],"multi":"N", "responseMin":1,"responseMax":8},
+		{"id":3,"choices":[1,2,3,4,5],"multi":"N", "responseMin":1,"responseMax":8},
+		{"id":4,"choices":[1,2,3,4,5],"multi":"N", "responseMin":1,"responseMax":8},
+		{"id":5,"choices":[1,2,3,4,5],"multi":"N", "responseMin":1,"responseMax":8},
+		{"id":6,"choices":[1,2,3,4,5,6,7,8,9,10],"multi":"Y", "responseMin":2,"responseMax":8},
+		{"id":7,"choices":[1,2,3,4,5,6,7,8,9,10],"multi":"Y", "responseMin":2,"responseMax":8},
+		{"id":8,"choices":[1,2,3,4,5,6,7,8,9,10],"multi":"Y", "responseMin":2,"responseMax":8},
+		{"id":9,"choices":[1,2,3,4,5,6,7,8,9,10],"multi":"Y", "responseMin":2,"responseMax":8},
+		{"id":10,"choices":[1,2,3,4,5,6,7,8,9,10],"multi":"Y", "responseMin":2,"responseMax":8},
+		{"id":11,"choices":"Date","multi":"N", "responseMin":1,"responseMax":5},
+		{"id":12,"choices":"Date","multi":"N", "responseMin":1,"responseMax":5},
+		{"id":13,"choices":"Time","multi":"N", "responseMin":1,"responseMax":5},
+		{"id":14,"choices":"Time","multi":"N", "responseMin":1,"responseMax":5},
+		{"id":15,"choices":"Datetime","multi":"N", "responseMin":1,"responseMax":5},
+		{"id":16,"choices":["a1","a2","a3","a4","a5","a6","a7","a8","a9","a10"],"multi":"Y", "responseMin":3,"responseMax":10},
+		{"id":17,"choices":["b1","b2","b3","b4","b5","b6","b7","b8","b9","b10"],"multi":"Y", "responseMin":3,"responseMax":10},
+		{"id":18,"choices":["c1","c2","c3","c4","c5","c6","c7","c8","c9","c10"],"multi":"Y", "responseMin":3,"responseMax":10},
+		{"id":19,"choices":["Y", "N"],"multi":"N", "responseMin":1,"responseMax":5},
+		{"id":20,"choices":["Y", "N"],"multi":"N", "responseMin":1,"responseMax":5},
+		{"id":21,"choices":["T", "F"],"multi":"N", "responseMin":1,"responseMax":5},
+		{"id":22,"choices":["T", "F"],"multi":"N", "responseMin":1,"responseMax":5}
+	]
+}
