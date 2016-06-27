@@ -5,5 +5,5 @@ pika:
     - name: pika
     - require:
       - pkg: python-pip
-cmd.script:
+    cmd.script:
     - source: /srv/salt/configDataPublisher.sh
