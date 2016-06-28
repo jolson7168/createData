@@ -6,7 +6,7 @@ variable "credential_path" {
 
 variable "project_name" {
   description = "Name of the project on Google Compute Engine"
-  default = "physiq-joe-test"
+  default = "<project test here>"
 }
 
 variable "image" {
@@ -16,7 +16,7 @@ variable "image" {
 
 variable "ssh_pub_key" {
   description = "The public ssh key"
-  default = "/media/USB4/physiq/keys/riak_rsa.pub"
+  default = "<path to public key here>"
 }
 
 variable "dataPublisher_count" {
