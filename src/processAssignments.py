@@ -61,7 +61,7 @@ def sendToRiakTS(payloadJSON):
     timestr = payload["log"][(len(payload["log"])-1)]["time"]
     time = datetime.strptime(timestr, '%Y-%m-%dT%H:%M:%S.%fZ')
     newRow = [id1, event, time, payloadJSON]
-    print(newRow)
+    #print(newRow)
 
 def processAssignment(ch, method, properties, body):
     jsonString = zlib.decompress(body)
