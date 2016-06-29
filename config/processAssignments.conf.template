@@ -1,0 +1,37 @@
+;----------------------------------------------------------
+; Configures the settings for ad hoc logging
+;
+;  LOGPATH              : where to put the logfile
+;  LOGFILE    	 		: filename for logfile
+;  LOGTIMEFORMAT   	 	: format for the timestamp in the log
+;  LOGFORMAT            : format for the log line
+;  LOGNAME              : name of the log
+
+[logging]
+logPath = ../logs/
+logFileName = processAssignments.log
+logTimeFormat = %Y-%m-%d %H:%M:%S
+logFormat = %(asctime)s %(levelname)s %(message)s
+logName = processAssignments
+;----------------------------------------------------------
+
+
+;----------------------------------------------------------
+; Configures the settings for pulling from RabbitMQ
+;
+;  IP                   : IP address of the RabbitMQ server
+;  PORT    	 	        : Port on the RMQ server
+;  LOGIN   	 	        : Login for the RMQ server
+;  PASSWORD   	 	    : Password for the RMQ server
+;  QUEUE   	 	        : Queue name on the RMQ server
+;  COMPRESSION   	 	: True or False - was the data post to RMQ compressed?
+
+[rabbitmq]
+ip=<ipaddress>
+port=5672
+login=<login>
+password=<password>
+queue=<queue>
+compression=<compression>
+;----------------------------------------------------------
+
