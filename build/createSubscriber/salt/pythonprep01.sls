@@ -7,3 +7,6 @@ pika:
       - pkg: python-pip
     cmd.script:
     - source: /srv/salt/configDataSubscriber.sh
+riak:
+    pip.installed:
+    - name: riak
