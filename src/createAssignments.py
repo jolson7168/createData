@@ -65,7 +65,6 @@ def processInput(scenario, startTime, logger):
     if randrange(0, 100) < scenario["probMiss"]:
         miss = True
     if not miss:
-        #endTime = startTime+timedelta(seconds=randrange(60,scenario["probDuration"]))
         currentTime = startTime
         for item in scenario["items"]:
             picks=[]
@@ -81,8 +80,10 @@ def processInput(scenario, startTime, logger):
                     picks.append((startTime+timedelta(seconds=randrange(1,60*60*24))).strftime('%H:%M'))
                 elif item["choices"] == "Datetime":
                     picks.append((startTime+timedelta(seconds=randrange(1,60*60*24))).strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
-            #thisTest.append({"id":item["id"],"results":picks,"responsetime":randrange(1, scenario["probAnswerDuration"])})
-            responseTime = randrange(1, scenario["probAnswerDuration"])
+            if scenario["answerDuration"]["type"] == "random":
+                responseTime = randrange(1, scenario["answerDuration"]["seconds"])
+            else:
+                responseTime = scenario["answerDuration"]["seconds"]
             thisTest.append({"value":picks,"start":currentTime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),"end":(currentTime+timedelta(seconds=responseTime)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')})
             currentTime = currentTime + timedelta(seconds=responseTime)
         status = "completed"
@@ -92,12 +93,15 @@ def processInput(scenario, startTime, logger):
     return thisTest, status, currentTime
 
 def executeScenario(channel, scenario, logger):
-    numTimesPerDay =  int(scenario["scheduleFreq"].split('x')[0])
-    betweenDays = int(scenario["scheduleFreq"].split('x')[1])
+    betweenDays = int(scenario["scheduleFreq"])
+    numTimesPerDay =  len(scenario["scheduleTimes"])
     assignmentDate = datetime.strptime(scenario["assignmentTime"], '%Y-%m-%dT%H:%M:%S.%fZ')
     totalCount = 0
     for x in range(1, scenario["numTargets"]+1):
-        subjectID = uuid.uuid4()
+        if scenario["subjectIDType"] == "uuid":
+            subjectID = uuid.uuid4()
+        else:
+            subjectID = x
         for numDays in range(1, scenario["numDays"]+1):
             currentDay = assignmentDate + timedelta(days=numDays)
             for perDay in range(1, numTimesPerDay+1):
@@ -110,8 +114,11 @@ def executeScenario(channel, scenario, logger):
                         payload["assigned_date"] = assignmentDate.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
                         payload["subject_id"] = str(subjectID)
                         payload["questionnaire_id"] = qSource["qSourceID"]
-                        offset = randint(0,86400)
-                        startTime = currentDay + timedelta(seconds=offset)
+                        if scenario["scheduleTimes"][perDay-1] == "Random":
+                            offset = randint(0,86400)
+                        else:
+                            offset = scenario["scheduleTimes"][perDay-1] *60*60
+                        startTime = currentDay + timedelta(seconds=offset)    
                         #payload["execute_on"] = startTime.strftime('%Y-%m-%d %H:%M:%S')
                         payload["responses"], payload["status"], completedTime = processInput(qSource,startTime, logger)
                         # Subroutine this, please...
@@ -145,7 +152,11 @@ def executeScenario(channel, scenario, logger):
                             logEntry["time"] = (completedTime + timedelta(seconds=randrange(1,60*3))).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
                             log.append(logEntry)
                         payload["log"] = log
-                        dumpToRabbit(channel, scenario["routing"]["exchange"], scenario["routing"]["routingKey"], json.dumps(payload))
+                        if channel != None:
+                            dumpToRabbit(channel, scenario["routing"]["exchange"], scenario["routing"]["routingKey"], json.dumps(payload))
+                        #else:
+                            #print(json.dumps(payload))
+                            
                         totalCount = totalCount+1
                         if (totalCount % 1000) == 0:
                                 logger.info('Wrote '+str(totalCount) +' records to RabbitMQ')
@@ -168,7 +179,10 @@ def main(argv):
     session = json.loads(open(args.scenario_file).read())
 
     # Execute the assignment scenarios
-    rabbitChannel = setUpRabbit(session["target"]["ip"],int(session["target"]["port"]),session["target"]["login"],session["target"]["password"])
+    if session["printOnly"] =="True":
+        rabbitChannel = None
+    else:
+        rabbitChannel = setUpRabbit(session["target"]["ip"],int(session["target"]["port"]),session["target"]["login"],session["target"]["password"])
     for scenario in session["scenarios"]:
         executeScenario(rabbitChannel, scenario, logger)
 
