@@ -1,14 +1,17 @@
 {
+    "comment":"scenario used to create a random data set. Twice daily at random times.",
     "target":{"ip":"<ipaddress>","port":"5672","login":"<login>","password":"<password>"},
+    "printOnly":"True",
     "scenarios": [
-         {"assignmentID":"55448fb0-a74b-4761-ab18-e6e1e1383a7a",
+         {
+          "subjectIDType":"uuid",
+          "assignmentID":"55448fb0-a74b-4761-ab18-e6e1e1383a7a",
           "assignmentTime":"2016-01-01T00:00:01.00000Z",
           "numDays":30,
           "qSource":[{
                         "qSourceID":"6bb8a2bf-9072-4500-99de-b5991b4f2ae4",
 	                    "probMiss":5,
-                        "probDuration":300,
-                        "probAnswerDuration":20,
+                        "answerDuration":{"type":"random", "seconds":20},
 	                    "items":[
 		                    {"id":1,"choices":[1,2,3,4,5],"multi":"N", "responseMin":1,"responseMax":8},
 		                    {"id":2,"choices":[1,2,3,4,5],"multi":"N", "responseMin":1,"responseMax":8},
@@ -35,7 +38,8 @@
 	                      ]
                         }],
           "numTargets":50000,
-          "scheduleFreq":"2x1",
+          "scheduleFreq":"1",
+          "scheduleTimes":["Random", "Random"],
           "routing":{"exchange":"test01","routingKey":"testKey"}
          }
     ]
