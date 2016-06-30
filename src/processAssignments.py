@@ -19,7 +19,6 @@ from riak import RiakClient
 import pika
 
 cfg = RawConfigParser()
-results = []
 client = RiakClient(protocol='pbc',nodes=[{ 'host': '104.196.150.180', 'pb_port': 8087 }])
 epoch = datetime.utcfromtimestamp(0)
 table = "responses01"
@@ -62,23 +61,23 @@ def getCmdLineParser():
 def sendToRiakTS(dataSet1):
     try:   
         # Create new tsObject and save to the database with .store()
+        startTime = time.time()
         table_object = client.table(table).new(dataSet1)
         result = table_object.store()
-        print("Records written: {}".format(result))
+        duration = round((time.time() - startTime),3)
+        logger.info("Record written: {0}, Time: {1}, Key: {2}|{3}|{4}".format(result, duration, dataSet1[0][0], dataSet1[0][1], dataSet1[0][2])))
     except Exception as e:
         print("Error: {}".format(e))
 
 def processAssignment(ch, method, properties, body):
-    global results
-    s1 = zlib.decompress(body)
+    results = []
+    #s1 = zlib.decompress(body)
     payload = json.loads(s1)
     id1 = payload["subject_id"]
     id2 = payload["questionnaire_id"]
     time2 = int((datetime.strptime(payload["log"][(len(payload["log"])-1)]["time"], '%Y-%m-%dT%H:%M:%S.%fZ') - epoch).total_seconds()*1000)
     results.append([id1, id2, time2, s1])
-    if len(results) == 1000:
-        sendToRiakTS(results)
-        results = []
+    sendToRiakTS(results)
     ch.basic_ack(delivery_tag = method.delivery_tag)
 
 def main(argv):
