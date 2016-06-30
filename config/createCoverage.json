@@ -1,14 +1,14 @@
 {
     "comment":"scenario used to test coverage, once a day at 10am, probability of expiration = 0, each response in exactly 20 seconds",
     "target":{"ip":"<ipaddress>","port":"5672","login":"<login>","password":"<password>"},
-    "printOnly":"False",
-    "compress": "False",
+    "printOnly":"True",
     "scenarios": [
          {
           "subjectIDType":"uuid",
           "assignmentID":"55448fb0-a74b-4761-ab18-e6e1e1383a7a",
           "assignmentTime":"2016-01-01T00:00:01.00000Z",
           "numDays":30,
+          "compress": "False",
           "qSource":[{
                         "qSourceID":"6bb8a2bf-9072-4500-99de-b5991b4f2ae4",
 	                    "probMiss":0,
