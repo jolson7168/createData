@@ -2,7 +2,6 @@
     "comment":"scenario used to create a random data set. Twice daily at random times.",
     "target":{"ip":"<ipaddress>","port":"5672","login":"<login>","password":"<password>"},
     "printOnly":"False",
-    "compress": "False",
     "scenarios": [
          {
           "subjectIDType":"uuid",
