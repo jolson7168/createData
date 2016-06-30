@@ -25,8 +25,12 @@ def setUpRabbit(ip, port, login, password):
     channel = connection.channel()    
     return channel
 
-def dumpToRabbit(channel, exchange, routingKey, payload):
-    channel.basic_publish(exchange=exchange,routing_key=routingKey,body=zlib.compress(payload))
+def dumpToRabbit(channel, exchange, routingKey, payload, compress):
+    if compress:
+        channel.basic_publish(exchange=exchange,routing_key=routingKey,body=zlib.compress(payload))
+    else:
+        channel.basic_publish(exchange=exchange,routing_key=routingKey,body=payload)
+
 
 def currentDayStr():
     return time.strftime("%Y%m%d")
@@ -96,6 +100,9 @@ def executeScenario(channel, scenario, logger):
     betweenDays = int(scenario["scheduleFreq"])
     numTimesPerDay =  len(scenario["scheduleTimes"])
     assignmentDate = datetime.strptime(scenario["assignmentTime"], '%Y-%m-%dT%H:%M:%S.%fZ')
+    compressOption = False
+    if scenario["compress"] == "True":    
+        compressOption = True
     totalCount = 0
     for x in range(1, scenario["numTargets"]+1):
         if scenario["subjectIDType"] == "uuid":
@@ -153,7 +160,7 @@ def executeScenario(channel, scenario, logger):
                             log.append(logEntry)
                         payload["log"] = log
                         if channel != None:
-                            dumpToRabbit(channel, scenario["routing"]["exchange"], scenario["routing"]["routingKey"], json.dumps(payload))
+                            dumpToRabbit(channel, scenario["routing"]["exchange"], scenario["routing"]["routingKey"], json.dumps(payload), compressOption)
                         #else:
                             #print(json.dumps(payload))
                             
