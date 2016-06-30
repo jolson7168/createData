@@ -1,6 +1,6 @@
 {
     "comment":"scenario used to test coverage, once a day at 10am, probability of expiration = 0, each response in exactly 20 seconds",
-    "target":{"ip":"<ipaddress>","port":"5672","login":"<login>","password":"<password>"},
+    "target":{"ip":"<ipaddress>","port":"5672","login":"<log>","password":"<pass>"},
     "printOnly":"False",
     "scenarios": [
          {

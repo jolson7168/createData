@@ -1,6 +1,6 @@
 {
     "comment":"scenario used to create a random data set. Twice daily at random times.",
-    "target":{"ip":"<ipaddress>","port":"5672","login":"<login>","password":"<password>"},
+    "target":{"ip":"<ipaddress>","port":"5672","login":"<log>","password":"<pass>"},
     "printOnly":"False",
     "scenarios": [
          {
