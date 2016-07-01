@@ -1,7 +1,7 @@
 provider "google" {
   credentials = "${file("${var.credential_path}")}"
   project     = "${var.project_name}"
-  region      = "us-east1"
+  region      = "us-central1"
 }
 
 
@@ -12,6 +12,7 @@ resource "template_file" "salt_bootstrap_dataSubscriber" {
     vars {
         hostname = "${lookup(var.dataSubscriber_hostnames, count.index)}"
         local_ip = "${lookup(var.dataSubscriber_ips, count.index)}"
+        numInstances = "${lookup(var.numInstances, count.index)}"
     }
 }
 
@@ -22,7 +23,7 @@ resource "google_compute_instance" "dataSubscriber" {
 
   name         = "${lookup(var.dataSubscriber_names, count.index)}"
   machine_type = "n1-standard-1"
-  zone         = "us-east1-d"
+  zone         = "us-central1-b"
 
 
   disk {
@@ -31,7 +32,7 @@ resource "google_compute_instance" "dataSubscriber" {
   }
 
   network_interface {
-    network = "riak-network"
+    network = "riakstack01"
     access_config {
         // Ephemermal IP
     }
