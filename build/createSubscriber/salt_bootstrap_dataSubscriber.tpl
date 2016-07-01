@@ -15,5 +15,6 @@ sudo service salt-minion stop
 sudo apt-get install -y git
 sudo mkdir /srv/salt
 git clone https://github.com/jolson7168/createData.git /home/ubuntu/createData
+sed -i "0,/<numInstances>/s//${numInstances}/" /home/ubuntu/createData/build/createSubscriber/salt/subscribeData.sls
 sudo cp -R /home/ubuntu/createData/build/createSubscriber/salt/* /srv/salt
 sudo salt-call --local state.highstate --state-verbose=False

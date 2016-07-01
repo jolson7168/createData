@@ -29,6 +29,12 @@ variable "dataSubscriber_ips" {
   }
 }
 
+variable "numInstances" {
+  default = {
+    "0" = "20"
+  }
+}
+
 variable "dataSubscriber_hostnames" {
   default = {
     "0" = "datasub01.local"
@@ -40,3 +46,4 @@ variable "dataSubscriber_names" {
     "0" = "datasub01"
   }
 }
+
