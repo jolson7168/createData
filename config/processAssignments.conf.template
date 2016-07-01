@@ -29,9 +29,21 @@ logName = processAssignments
 [rabbitmq]
 ip=<ipaddress>
 port=5672
-login=<login>
-password=<password>
+login=<log>
+password=<pass>
 queue=<queue>
 compression=<compression>
 ;----------------------------------------------------------
 
+;----------------------------------------------------------
+; Configures the settings for pushing to RiakTS
+;
+;  IP                   : IP address of the RiakTS cluster
+;  PORT    	 	        : Port on the RTS server
+;  TABLE   	 	        : Target table on RiakTS cluster
+
+[riakts]
+ip=<riaktsipaddress>
+port=8087
+table=<table>
+;----------------------------------------------------------

@@ -19,9 +19,12 @@ from riak import RiakClient
 import pika
 
 cfg = RawConfigParser()
-client = RiakClient(protocol='pbc',nodes=[{ 'host': '104.196.150.180', 'pb_port': 8087 }])
+gclient = RiakClient()
 epoch = datetime.utcfromtimestamp(0)
-table = "responses01"
+gtable = ""
+glogname = ""
+
+
 
 def setUpRabbit(ip, port, login, password, queueName):
     credentials = pika.PlainCredentials(login, password)
@@ -59,28 +62,33 @@ def getCmdLineParser():
     return parser
 
 def sendToRiakTS(dataSet1):
+    global gtable
+    global gclient
+    logger = logging.getLogger("processAssignments")
     try:   
         # Create new tsObject and save to the database with .store()
         startTime = time.time()
-        table_object = client.table(table).new(dataSet1)
+        table_object = gclient.table(gtable).new(dataSet1)
         result = table_object.store()
         duration = round((time.time() - startTime),3)
-        logger.info("Record written: {0}, Time: {1}, Key: {2}|{3}|{4}".format(result, duration, dataSet1[0][0], dataSet1[0][1], dataSet1[0][2])))
+        logger.info("Record written: {0}, Time: {1}, Key: {2}|{3}|{4}".format(result, duration, dataSet1[0][0], dataSet1[0][1], dataSet1[0][2]))
     except Exception as e:
         print("Error: {}".format(e))
 
 def processAssignment(ch, method, properties, body):
     results = []
     #s1 = zlib.decompress(body)
-    payload = json.loads(s1)
+    payload = json.loads(body)
     id1 = payload["subject_id"]
     id2 = payload["questionnaire_id"]
     time2 = int((datetime.strptime(payload["log"][(len(payload["log"])-1)]["time"], '%Y-%m-%dT%H:%M:%S.%fZ') - epoch).total_seconds()*1000)
-    results.append([id1, id2, time2, s1])
+    results.append([id1, id2, time2, body])
     sendToRiakTS(results)
     ch.basic_ack(delivery_tag = method.delivery_tag)
 
 def main(argv):
+    global gtable
+    global gclient
 
     # Overhead to manage command line opts and config file
     p = getCmdLineParser()
@@ -88,24 +96,27 @@ def main(argv):
     cfg.read(args.config_file)
 
     # Get the logger going
+    glogname = cfg.get('logging', 'logName')
     rightNow = time.strftime("%Y%m%d%H%M%S")
     logger = initLog(rightNow)
-    logger.info('Starting Run: '+time.strftime("%Y%m%d%H%M%S")+'  ==============================')
-   
-    # Load the scenario
+    logger.info('Starting Run: '+time.strftime("%Y%m%d%H%M%S")+'  =========================')
 
-    # Execute the assignment scenarios
+    # Get Riak going    
+    gclient = RiakClient(protocol='pbc',nodes=[{ 'host': cfg.get('riakts', 'ip'), 'pb_port': int(cfg.get('riakts', 'port')) }])
+    gtable = cfg.get('riakts','table')
+
+    # Get Rabbit going
     rabbitChannel = setUpRabbit(cfg.get('rabbitmq', 'ip'), int(cfg.get('rabbitmq', 'port')),cfg.get('rabbitmq', 'login'),cfg.get('rabbitmq', 'password'),cfg.get('rabbitmq', 'queue'))
 
-
+    logger.info('RabbitMQ channel initialized...')
     rabbitChannel.basic_qos(prefetch_count=1)
     rabbitChannel.basic_consume(processAssignment, queue=cfg.get('rabbitmq', 'queue'))
-
+    logger.info('RabbitMQ consumer initialized...')
     rabbitChannel.start_consuming()
 
 
     # Clean up
-    logger.info('Done! '+time.strftime("%Y%m%d%H%M%S")+'  ==============================')
+    logger.info('Done! '+time.strftime("%Y%m%d%H%M%S")+'  ==========================')
 
 if __name__ == "__main__":
     main(sys.argv[1:])
