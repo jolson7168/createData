@@ -12,6 +12,7 @@ resource "template_file" "salt_bootstrap_dataPublisher" {
     vars {
         hostname = "${lookup(var.dataPublisher_hostnames, count.index)}"
         local_ip = "${lookup(var.dataPublisher_ips, count.index)}"
+        start_id = "${lookup(var.startID, count.index)}"
     }
 }
 
@@ -33,7 +34,7 @@ resource "google_compute_instance" "dataPublisher" {
   network_interface {
     network = "riak-network"
     access_config {
-      // Ephemeral IP
+        // Ephemermal IP
     }
   }
 

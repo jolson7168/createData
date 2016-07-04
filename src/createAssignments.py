@@ -104,11 +104,15 @@ def executeScenario(channel, scenario, logger):
     if scenario["compress"] == "True":    
         compressOption = True
     totalCount = 0
+    if "startID" in scenario:
+        startID = int(scenario["startID"])
+    else:
+        startID = 0
     for x in range(1, scenario["numTargets"]+1):
         if scenario["subjectIDType"] == "uuid":
             subjectID = uuid.uuid4()
         else:
-            subjectID = x
+            subjectID = x +startID
         for numDays in range(1, scenario["numDays"]+1):
             currentDay = assignmentDate + timedelta(days=numDays)
             for perDay in range(1, numTimesPerDay+1):
