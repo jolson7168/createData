@@ -25,18 +25,31 @@ variable "dataPublisher_count" {
 
 variable "dataPublisher_ips" {
   default = {
-    "0" = "10.240.0.5"
+    "0" = "<insert IP1 here>"
+    "1" = "<insert IP2 here>"
+    "2" = "<insert IP3 here>"
   }
 }
 
 variable "dataPublisher_hostnames" {
   default = {
     "0" = "datapub01.local"
+    "1" = "datapub02.local"
+    "2" = "datapub03.local"
   }
 }
 
 variable "dataPublisher_names" {
   default = {
     "0" = "datapub01"
+    "1" = "datapub02"
+    "2" = "datapub03"
+  }
+
+variable "startID" {
+  default = {
+    "0" = "0"
+    "1" = "50001"
+    "2" = "100001"
   }
 }
