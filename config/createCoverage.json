@@ -4,7 +4,7 @@
     "printOnly":"False",
     "scenarios": [
          {
-          "subjectIDType":"uuid",
+          "subjectIDType":"integer",
           "assignmentID":"55448fb0-a74b-4761-ab18-e6e1e1383a7a",
           "assignmentTime":"2016-01-01T00:00:01.00000Z",
           "numDays":30,
