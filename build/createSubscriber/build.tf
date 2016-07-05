@@ -13,6 +13,7 @@ resource "template_file" "salt_bootstrap_dataSubscriber" {
         hostname = "${lookup(var.dataSubscriber_hostnames, count.index)}"
         local_ip = "${lookup(var.dataSubscriber_ips, count.index)}"
         numInstances = "${lookup(var.numInstances, count.index)}"
+        haProxyIP = "${var.haProxyIP}"
     }
 }
 

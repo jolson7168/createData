@@ -23,6 +23,12 @@ variable "dataSubscriber_count" {
   default = 1
 }
 
+
+variable "haProxyIP" {
+  description = "IP address of the HA Proxy machine"
+  default = "<ip address>"
+}
+
 variable "dataSubscriber_ips" {
   default = {
     "0" = "10.240.0.5"
