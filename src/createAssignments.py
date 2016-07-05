@@ -123,7 +123,10 @@ def executeScenario(channel, scenario, logger):
                         payload["questionnaire_assignment_id"] = scenario["assignmentID"]
                         payload["questionnaire_response_id"] = str(uuid.uuid4())
                         payload["assigned_date"] = assignmentDate.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                        payload["subject_id"] = str(subjectID)
+                        if isinstance(subjectID, int):
+                            payload["subject_id"] = subjectID
+                        else:
+                            payload["subject_id"] = str(subjectID)
                         payload["questionnaire_id"] = qSource["qSourceID"]
                         if scenario["scheduleTimes"][perDay-1] == "Random":
                             offset = randint(0,86400)
