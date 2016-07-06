@@ -1,0 +1,87 @@
+
+variable "credential_path" {
+  description = "Path to credential file"
+  default = "<path to credentials file>"
+}
+
+variable "project_name" {
+  description = "Name of the project on Google Compute Engine"
+  default = "<test project name>"
+}
+
+variable "image" {
+  description = "Google VM image to use"
+  default = "ubuntu-1510-wily-v20160315"
+}
+
+variable "ssh_pub_key" {
+  description = "The public ssh key"
+  default = "<path to public key here>"
+}
+
+variable "coverage_count" {
+  default = 1
+}
+
+
+variable "haProxyIP" {
+  description = "IP address of the HA Proxy machine"
+  default = "<ip address>"
+}
+
+variable "coverage_ips" {
+  default = {
+    "0" = "<ip address>"
+    "1" = "<ip address>"
+    "2" = "<ip address>"
+  }
+}
+
+variable "numInstances" {
+  default = {
+    "0" = "20"
+  }
+}
+
+variable "coverage_hostnames" {
+  default = {
+    "0" = "coverage01.local"
+  }
+}
+
+variable "coverage_names" {
+  default = {
+    "0" = "coverage01"
+  }
+}
+
+
+variable "qid" {
+  description = "q ID"
+  default = "6bb8a2bf-9072-4500-99de-b5991b4f2ae4"
+}
+
+variable "tableName" {
+  description = "tableName"
+  default = "responses01"
+}
+
+variable "startTime" {
+  description = "start date"
+  default = "2016-01-01"
+}
+
+variable "numDays" {
+  description = "numDays"
+  default = "30"
+}
+
+variable "numIDs" {
+  description = "numDays"
+  default = "150000"
+}
+
+variable "startID" {
+  description = "startID"
+  default = "1"
+}
