@@ -43,8 +43,8 @@ def unix_time_millis(dt):
     return int(td.total_seconds() * 1000.0)
 
 def getCoverage(client, table, rid, qid, t1, t2):
-    fmt = "select payload from {table} where time > {t1} and time < {t2} and rid = {r_id} and qid = '{q_id}'"
-    query = fmt.format(table=table, t1=t1, t2=t2, r_id = rid, q_id = qid)
+    fmt = "select payload from {table} where time > {t1} and time < {t2} and rid = {r_id}"
+    query = fmt.format(table=table, t1=t1, t2=t2, r_id = rid)
     startTime = time.time()
     ts_obj = client.ts_query(table, query)
     duration = round((time.time() - startTime),3)
