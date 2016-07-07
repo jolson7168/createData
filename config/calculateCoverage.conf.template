@@ -9,10 +9,10 @@
 
 [logging]
 logPath = ../logs/
-logFileName = processAssignments.log
+logFileName = calculateCoverage.log
 logTimeFormat = %Y-%m-%d %H:%M:%S
 logFormat = %(asctime)s %(levelname)s %(message)s
-logName = processAssignments
+logName = calculateCoverage
 ;----------------------------------------------------------
 
 
