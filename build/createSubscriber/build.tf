@@ -14,9 +14,13 @@ resource "template_file" "salt_bootstrap_dataSubscriber" {
         local_ip = "${lookup(var.dataSubscriber_ips, count.index)}"
         numInstances = "${lookup(var.numInstances, count.index)}"
         haProxyIP = "${var.haProxyIP}"
+        rabbitIP = "${var.rabbitIP}"
+        log01 = "${var.log01}"
+        p01 = "${var.p01}"
+        queueName = "${var.queueName}"
+        tableName = "${var.tableName}"
     }
 }
-
 
 resource "google_compute_instance" "dataSubscriber" {
 

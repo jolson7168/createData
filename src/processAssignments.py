@@ -80,7 +80,7 @@ def processAssignment(ch, method, properties, body):
     #s1 = zlib.decompress(body)
     payload = json.loads(body)
     id1 = payload["subject_id"]
-    id2 = payload["questionnaire_id"]
+    id2 = "questionnaire"
     time2 = int((datetime.strptime(payload["log"][(len(payload["log"])-1)]["time"], '%Y-%m-%dT%H:%M:%S.%fZ') - epoch).total_seconds()*1000)
     results.append([id1, id2, time2, body])
     sendToRiakTS(results)

@@ -53,3 +53,27 @@ variable "dataSubscriber_names" {
   }
 }
 
+variable "rabbitIP" {
+  description = "IP address of the queue server"
+  default = "<ip address>"
+}
+
+variable "log01" {
+  description = "login for rabbit MQ"
+  default = "<login>"
+}
+
+variable "p01" {
+  description = "password for rabbit MQ"
+  default = "<password>"
+}
+
+variable "queueName" {
+  description = "name for queue"
+  default = "<queuename>"
+}
+
+variable "tableName" {
+  description = "taget table"
+  default = "<tablename>"
+}
