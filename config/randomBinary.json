@@ -1,0 +1,14 @@
+{
+    "comment":"scenario used to create random binary data.",
+    "printOnly":"True",
+    "scenarios": [{
+          "subjectIDType":"uuid",
+          "startDate":"2016-01-01T00:00:00.00000Z",
+          "endDate":"2016-12-31T23:59:59.99999Z",
+          "numTargets":1,
+          "frequency": 10,
+          "frequency units": "seconds",
+          "payload size": 23,
+          "payload units": "kb"
+         }] 
+}
