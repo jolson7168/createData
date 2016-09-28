@@ -51,12 +51,12 @@ def initLog(rightNow):
 
 def getCmdLineParser():
     import argparse
-    desc = 'Execute createAssignments'
+    desc = 'Execute createRandomBinar'
     parser = argparse.ArgumentParser(description=desc)
 
-    parser.add_argument('-c', '--config_file', default='../config/createAssignments.conf',
+    parser.add_argument('-c', '--config_file', default='../config/createRandomBinary.conf',
                         help='configuration file name (*.ini format)')
-    parser.add_argument('-s', '--scenario_file', default='../config/createAssignments.json',
+    parser.add_argument('-s', '--scenario_file', default='../config/createRandomBinaryf.json',
                         help='scenario file name')
 
     return parser
@@ -70,9 +70,15 @@ def executeScenario(channel, scenario, logger):
     totalCount = 0
     for x in range(1, scenario["numTargets"]+1):
         if scenario["subjectIDType"] == "uuid":
-            subjectID = uuid.uuid4()
-        else:
+            subjectID = str(uuid.uuid4())
+        elif isinstance(scenario["subjectIDType"], (int, long)):
             subjectID = x +startID
+        else:
+            if x < 10:
+                xS = '{0}{1}'.format('0',x)
+            else:
+                xS = '{0}'.format(x)
+            subjectID = '{0}{1}'.format(scenario["subjectIDType"], xS)
         now = startDate
         while now <= endDate:
             timeStart = now
@@ -85,7 +91,7 @@ def executeScenario(channel, scenario, logger):
             elif scenario['frequency units'] == 'days':
                 timeEnd = timeStart + timedelta(days = scenario['frequency'])
             now = timeEnd
-            payload = {'id':subjectID, 'start':timeStart.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), 'end':timeEnd.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), 'size':int(scenario['payload size'])}
+            payload = {'id':subjectID, 'start':timeStart.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), 'end':timeEnd.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), 'size':int(scenario['payload size']), 'sizeUnits':scenario['payload units']}
             if channel != None:
                 dumpToRabbit(channel, scenario["routing"]["exchange"], scenario["routing"]["routingKey"], json.dumps(payload))
             else:
@@ -108,7 +114,7 @@ def main(argv):
     # Load the scenario
     session = json.loads(open(args.scenario_file).read())
 
-    # Execute the assignment scenarios
+    # Execute the scenarios
     if session["printOnly"] =="True":
         rabbitChannel = None
     else:
