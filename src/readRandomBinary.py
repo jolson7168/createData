@@ -75,7 +75,7 @@ def readRiakTS(client, tableName, startTime, endTime, assetID, expected, logger)
             total = total + row[0]
         totalDuration = round((time.time() - startQTime),3)
         if len(total) == expected:
-            print('Match! T1: {2} T2: {3} rt: {0} tt: {1} e: {4}'.format(riakDuration, totalDuration, fromUnixTime(startTime, PRECISION), fromUnixTime(endTime, PRECISION)), expected)
+            print('Match! T1: {2} T2: {3} rt: {0} tt: {1} e: {4}'.format(riakDuration, totalDuration, fromUnixTime(startTime, PRECISION), fromUnixTime(endTime, PRECISION), expected))
         else:
             print('Mismatch! duration: {0} expected: {1} got: {2}'.format(riakDuration, expected, len(total)))        
         #logger.info("Record written: {0}, Time: {1}, Key: {2}".format(result, riakduration, dataSet1[0][1]))
@@ -99,8 +99,8 @@ def main(argv):
     # Get Riak going    
     client = RiakClient(protocol='pbc',nodes=[{ 'host': cfg.get('riakts', 'ip'), 'pb_port': int(cfg.get('riakts', 'port')) }])
     table = cfg.get('riakts','table')
-    startDate = toUnixTime('2016-01-02T00:00:00.00000Z',PRECISION)
-    endDate = toUnixTime('2016-01-02T23:59:59.99999Z',PRECISION)
+    startDate = toUnixTime('2016-01-01T00:00:00.00000Z',PRECISION)
+    endDate = toUnixTime('2016-12-31T23:59:59.99999Z',PRECISION)
 
 
     blockSize = 1024        # kb
