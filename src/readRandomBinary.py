@@ -77,8 +77,8 @@ def readRiakTS(client, tableName, startTime, endTime, assetID, expected, logger)
         if len(total) == expected:
             print('Match! T1: {2} T2: {3} rt: {0} tt: {1}'.format(riakDuration, totalDuration, fromUnixTime(startTime, PRECISION), fromUnixTime(endTime, PRECISION)))
         else:
-            print('Mismatch! duration: {0} expected: {1} got: {2}'.format(duration, expected, len(total)))        
-        #logger.info("Record written: {0}, Time: {1}, Key: {2}".format(result, duration, dataSet1[0][1]))
+            print('Mismatch! duration: {0} expected: {1} got: {2}'.format(riakDuration, expected, len(total)))        
+        #logger.info("Record written: {0}, Time: {1}, Key: {2}".format(result, riakduration, dataSet1[0][1]))
     except Exception as e:
         print("Error: {}".format(e))
 
@@ -103,9 +103,10 @@ def main(argv):
     endDate = toUnixTime('2016-01-02T23:59:59.99999Z',PRECISION)
 
     # 6 = 6*10sec = 1 min
-    numIntervals = 6*60
-    interval = int(PRECISION*10)*numIntervals
-    expected = int(23*1024)*numIntervals
+    blockSize = 1024
+    numIntervals = 1
+    interval = int(450 * PRECISION * numIntervals)
+    expected = int((blockSize*1024)*numIntervals)
     now = startDate
     while now < endDate:
         #readRiakTS(client, table, fromUnixTime(now,PRECISION), fromUnixTime(now+interval,PRECISION), 'asset01', expected, logger)
