@@ -74,10 +74,13 @@ def executeScenario(channel, scenario, logger):
         elif isinstance(scenario["subjectIDType"], (int, long)):
             subjectID = x +startID
         else:
-            if x < 10:
-                xS = '{0}{1}'.format('0',x)
+            startAt = 0
+            if 'startID' in scenario:
+                startAt = int(scenario['startID'])
+            if (startAt + x) < 10:
+                xS = '{0}{1}'.format('0',startAt+x)
             else:
-                xS = '{0}'.format(x)
+                xS = '{0}'.format(startAt+x)
             subjectID = '{0}{1}'.format(scenario["subjectIDType"], xS)
         now = startDate
         while now <= endDate:
