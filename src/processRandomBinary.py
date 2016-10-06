@@ -19,6 +19,10 @@ from riak import RiakClient
 
 import pika
 
+PRECISION = 1000.0
+BLOCKSIZE = 23*1024
+BLOCKTIME = 10*PRECISION
+
 cfg = RawConfigParser()
 gclient = RiakClient()
 epoch = datetime.utcfromtimestamp(0)
@@ -64,7 +68,7 @@ def getCmdLineParser():
 def toUnixTime(dt):
     dt1 = datetime.strptime(dt, '%Y-%m-%dT%H:%M:%S.%fZ')
     td = dt1 - datetime.fromtimestamp(0)
-    return int(td.total_seconds() * 100000.0)
+    return int(td.total_seconds() * PRECISION)
 
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
@@ -77,7 +81,7 @@ def splitUpData(assetId, startTime, payload, blocksize):
     if len(payload) <= blocksize:
         row.append(assetId)
         row.append(startTime)
-        row.append(len(payload))
+        row.append(payload)
         retval.append(row)
     else:
         theseChunks = chunks(payload, blocksize)
@@ -87,7 +91,7 @@ def splitUpData(assetId, startTime, payload, blocksize):
             row = []
             row.append(assetId)
             row.append(int(offset+startTime))
-            row.append(len(aChunk))
+            row.append(aChunk)
             retval.append(row)
             offset = offset + BLOCKTIME
     return retval
@@ -121,7 +125,7 @@ def getRandomBinary(size, units):
 def processData(ch, method, properties, body):
     results = []
     payload = json.loads(body)
-    recordSet = splitUpData(payload['id'], toUnixTime(payload['start']), getRandomBinary(payload['size'],payload['sizeUnits']))
+    recordSet = splitUpData(payload['id'], toUnixTime(payload['start']), getRandomBinary(payload['size'],payload['sizeUnits']), BLOCKSIZE)
     sendToRiakTS(recordSet)
     ch.basic_ack(delivery_tag = method.delivery_tag)
 
