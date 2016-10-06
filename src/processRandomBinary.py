@@ -66,6 +66,32 @@ def toUnixTime(dt):
     td = dt1 - datetime.fromtimestamp(0)
     return int(td.total_seconds() * 100000.0)
 
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in xrange(0, len(l), n):
+        yield l[i:i + n]
+
+def splitUpData(assetId, startTime, payload, blocksize):
+    retval = []
+    row=[]
+    if len(payload) <= blocksize:
+        row.append(assetId)
+        row.append(startTime)
+        row.append(len(payload))
+        retval.append(row)
+    else:
+        theseChunks = chunks(payload, blocksize)
+        now = startTime
+        offset = 0
+        for aChunk in theseChunks:
+            row = []
+            row.append(assetId)
+            row.append(int(offset+startTime))
+            row.append(len(aChunk))
+            retval.append(row)
+            offset = offset + BLOCKTIME
+    return retval
+
 def processRecord(id1, start, end, data):
     print('----------------------------------------------------------------')
     print('{0}: {1} - {2} / {3}'.format(id1, start, end, data))
@@ -79,7 +105,7 @@ def sendToRiakTS(dataSet1):
         table_object = gclient.table(gtable).new(dataSet1)
         result = table_object.store()
         duration = round((time.time() - startTime),3)
-        logger.info("Record written: {0}, Time: {1}, Key: {2}".format(result, duration, dataSet1[0][1]))
+        logger.info("Record written: {0}, Num records: {1} Time: {2}, Key: {3}".format(result, len(dataSet1), duration, dataSet1[0][1]))
     except Exception as e:
         print("Error: {}".format(e))
 
@@ -94,11 +120,9 @@ def getRandomBinary(size, units):
 
 def processData(ch, method, properties, body):
     results = []
-    #s1 = zlib.decompress(body)
     payload = json.loads(body)
-    #record = (payload['id'], toUnixTime(payload['start']), toUnixTime(payload['end']), getRandomBinary(payload['size'],payload['sizeUnits']))
-    record = [(payload['id'], toUnixTime(payload['start']), getRandomBinary(payload['size'],payload['sizeUnits']))]
-    sendToRiakTS(record)
+    recordSet = splitUpData(payload['id'], toUnixTime(payload['start']), getRandomBinary(payload['size'],payload['sizeUnits']))
+    sendToRiakTS(recordSet)
     ch.basic_ack(delivery_tag = method.delivery_tag)
 
 def main(argv):
