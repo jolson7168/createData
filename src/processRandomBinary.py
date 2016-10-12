@@ -20,7 +20,6 @@ from riak import RiakClient
 import pika
 
 PRECISION = 1000.0
-BLOCKSIZE = 23*1024
 BLOCKTIME = 10*PRECISION
 
 cfg = RawConfigParser()
@@ -125,7 +124,12 @@ def getRandomBinary(size, units):
 def processData(ch, method, properties, body):
     results = []
     payload = json.loads(body)
-    recordSet = splitUpData(payload['id'], toUnixTime(payload['start']), getRandomBinary(payload['size'],payload['sizeUnits']), BLOCKSIZE)
+    recordSet = []
+    if cfg.get('dataproc', 'splitup') == 'Y':
+        recordSet = splitUpData(payload['id'], toUnixTime(payload['start']), getRandomBinary(payload['size'],payload['sizeUnits']), int(cfg.get('dataproc', 'blocksize')))
+    else:
+        recordset.append(payload['id'], toUnixTime(payload['start']), getRandomBinary(payload['size'],payload['sizeUnits']))
+
     sendToRiakTS(recordSet)
     ch.basic_ack(delivery_tag = method.delivery_tag)
 
