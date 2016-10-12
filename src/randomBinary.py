@@ -94,7 +94,7 @@ def executeScenario(channel, scenario, logger):
             elif scenario['frequency units'] == 'days':
                 timeEnd = timeStart + timedelta(days = scenario['frequency'])
             now = timeEnd
-            print('{0},{1}'.format(timeStart.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),timeEnd.strftime('%Y-%m-%dT%H:%M:%S.%fZ')))
+            #print('{0},{1}'.format(timeStart.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),timeEnd.strftime('%Y-%m-%dT%H:%M:%S.%fZ')))
             payload = {'id':subjectID, 'start':timeStart.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), 'end':timeEnd.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), 'size':int(scenario['payload size']), 'sizeUnits':scenario['payload units']}
             if channel != None:
                 dumpToRabbit(channel, scenario["routing"]["exchange"], scenario["routing"]["routingKey"], json.dumps(payload))
