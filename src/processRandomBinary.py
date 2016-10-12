@@ -128,7 +128,11 @@ def processData(ch, method, properties, body):
     if cfg.get('dataproc', 'splitup') == 'Y':
         recordSet = splitUpData(payload['id'], toUnixTime(payload['start']), getRandomBinary(payload['size'],payload['sizeUnits']), int(cfg.get('dataproc', 'blocksize')))
     else:
-        recordSet.append(payload['id'], toUnixTime(payload['start']), getRandomBinary(payload['size'],payload['sizeUnits']))
+        thisOne = []
+        thisOne.append(payload['id'])
+        thisOne.append(toUnixTime(payload['start']))
+        thisOne.append(getRandomBinary(payload['size'],payload['sizeUnits']))
+        recordSet.append(thisOne)
 
     sendToRiakTS(recordSet)
     ch.basic_ack(delivery_tag = method.delivery_tag)
