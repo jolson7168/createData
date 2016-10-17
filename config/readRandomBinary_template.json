@@ -1,0 +1,24 @@
+{
+    "scenarios": [
+                {"server": {"ip":"<ip address>","port":8087, "login":"<login>", "password":"<password>"},
+                 "name":"eventsTest6_1min",
+                 "dataSource":{"table":"eventsTest6","quantum":{"num":6,"units":"hours", "maxPartitions":5,"precision":1000.0}},
+                 "id":"asset501",
+                 "interval": {"value":1, "units":"minutes", "startTime":"2016-01-01T00:00:00.000Z", "endTime":"2017-01-01T00:00:00.000Z",
+                              "expected":{"value":200, "units":"bytes"}}
+                },
+               {"server": {"ip":"<ip address>","port":8087, "login":"<login>", "password":"<password>"},
+                 "name":"eventsTest6_1mon",
+                 "dataSource":{"table":"eventsTest6","quantum":{"num":6,"units":"hours", "maxPartitions":5,"precision":1000.0}},
+                 "id":"asset501",
+                 "interval": [["2016-01-01T00:00:00.000Z", "2016-02-01T00:00:00.000Z", {"value":8928000, "units":"bytes"}],
+                              ["2016-02-01T00:00:00.000Z", "2016-03-01T00:00:00.000Z", {"value":8352000, "units":"bytes"}]]
+                },
+               {"server": {"ip":"<ip address>","port":8087, "login":"<login>", "password":"<password>"},
+                 "name":"eventsTest6_1year",
+                 "dataSource":{"table":"eventsTest6","quantum":{"num":6,"units":"hours", "maxPartitions":5,"precision":1000.0}},
+                 "id":"asset501",
+                 "interval": [["2016-01-01T00:00:00.000Z", "2017-01-01T00:00:00.000Z",{"value":105301400, "units":"bytes"}]]
+                }
+    ]
+}
