@@ -62,17 +62,15 @@ def fromUnixTime(dt, precision = 1000.0):
 
 def splitIntervals(start, end, interval):
     retval = []
-    offset = int(interval*.50)
     if (end - start) > interval:
         now = start
+        offset = int(interval *.20)
         while now < end:
             if (now + interval) > end:
                 retval.append((now, end))
-                print("End:{0}".format(end-now))
             else:
-                retval.append((now, now+interval-offset))
-                print("Not End:{0}".format((now+interval-offset) - (now)))
-            now = now + interval-offset
+                retval.append((now, now+interval - offset))
+            now = now + interval - offset
     elif (end - start) == interval:
         # Sort of a hack...
         retval.append((start,start + int(interval/2)))
