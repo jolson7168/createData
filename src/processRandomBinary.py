@@ -108,7 +108,7 @@ def sendToRiakTS(dataSet1, payloadSize):
     try:
         for table in gtable:   
             startTime = time.time()
-            table_object = gclient.table(gtable).new(dataSet1)
+            table_object = gclient.table(table).new(dataSet1)
             result = table_object.store()
             duration = round((time.time() - startTime),3)
             logger.info("Record written: {0}, Num records: {1}, Size: {2}, Time: {3}, Key: {4}".format(result, len(dataSet1), payloadSize, duration, dataSet1[0][1]))
