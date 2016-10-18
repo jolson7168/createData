@@ -20,7 +20,6 @@ from riak import RiakClient
 import pika
 
 PRECISION = 1000.0
-BLOCKTIME = 10*PRECISION
 
 cfg = RawConfigParser()
 gclient = RiakClient()
@@ -77,11 +76,13 @@ def chunks(l, n):
 def splitUpData(assetId, startTime, payload, blocksize):
     retval = []
     row=[]
+    totPayload = 0
     if len(payload) <= blocksize:
         row.append(assetId)
         row.append(startTime)
         row.append(payload)
         retval.append(row)
+        totPayload = len(payload)
     else:
         theseChunks = chunks(payload, blocksize)
         now = startTime
@@ -92,25 +93,27 @@ def splitUpData(assetId, startTime, payload, blocksize):
             row.append(int(offset+startTime))
             row.append(aChunk)
             retval.append(row)
-            offset = offset + BLOCKTIME
-    return retval
+            offset = offset + (int(cfg.get('dataproc', 'blocktime'))*int(PRECISION))
+            totPayload = totPayload + len(aChunk)
+    return retval, totPayload
 
 def processRecord(id1, start, end, data):
     print('----------------------------------------------------------------')
     print('{0}: {1} - {2} / {3}'.format(id1, start, end, data))
 
-def sendToRiakTS(dataSet1):
+def sendToRiakTS(dataSet1, payloadSize):
     global gtable
     global gclient
     logger = logging.getLogger("processRandomBinary")
-    try:   
-        startTime = time.time()
-        table_object = gclient.table(gtable).new(dataSet1)
-        result = table_object.store()
-        duration = round((time.time() - startTime),3)
-        logger.info("Record written: {0}, Num records: {1} Time: {2}, Key: {3}".format(result, len(dataSet1), duration, dataSet1[0][1]))
+    try:
+        for table in gtable:   
+            startTime = time.time()
+            table_object = gclient.table(gtable).new(dataSet1)
+            result = table_object.store()
+            duration = round((time.time() - startTime),3)
+            logger.info("Record written: {0}, Num records: {1}, Size: {2}, Time: {3}, Key: {4}".format(result, len(dataSet1), payloadSize, duration, dataSet1[0][1]))
     except Exception as e:
-        print("Error: {}".format(e))
+        logger.info("Error on record written: {0}".format(e))
 
 def getRandomBinary(size, units):
     if units == 'b':
@@ -125,16 +128,20 @@ def processData(ch, method, properties, body):
     results = []
     payload = json.loads(body)
     recordSet = []
+    payloadSize = 0
+    payloadData = ''
     if cfg.get('dataproc', 'splitup') == 'Y':
-        recordSet = splitUpData(payload['id'], toUnixTime(payload['start']), getRandomBinary(payload['size'],payload['sizeUnits']), int(cfg.get('dataproc', 'blocksize')))
+        recordSet, payloadSize = splitUpData(payload['id'], toUnixTime(payload['start']), getRandomBinary(payload['size'],payload['sizeUnits']), int(cfg.get('dataproc', 'blocksize')))
     else:
         thisOne = []
         thisOne.append(payload['id'])
         thisOne.append(toUnixTime(payload['start']))
-        thisOne.append(getRandomBinary(payload['size'],payload['sizeUnits']))
+        payloadData = getRandomBinary(payload['size'],payload['sizeUnits'])
+        payloadSize = len(payloadData)
+        thisOne.append(payloadData)
         recordSet.append(thisOne)
 
-    sendToRiakTS(recordSet)
+    sendToRiakTS(recordSet, payloadSize)
     ch.basic_ack(delivery_tag = method.delivery_tag)
 
 def main(argv):
@@ -154,7 +161,7 @@ def main(argv):
 
     # Get Riak going    
     gclient = RiakClient(protocol='pbc',nodes=[{ 'host': cfg.get('riakts', 'ip'), 'pb_port': int(cfg.get('riakts', 'port')) }])
-    gtable = cfg.get('riakts','table')
+    gtable = cfg.get('riakts','tables').split(',')
 
     # Get Rabbit going
     rabbitChannel = setUpRabbit(cfg.get('rabbitmq', 'ip'), int(cfg.get('rabbitmq', 'port')),cfg.get('rabbitmq', 'login'),cfg.get('rabbitmq', 'password'),cfg.get('rabbitmq', 'queue'))
