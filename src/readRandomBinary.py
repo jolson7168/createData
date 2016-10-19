@@ -95,8 +95,8 @@ def executeQuery(client, table, asset, start, end, maxInt, expectedPayloadSize, 
                     if 'no response from backend' in e:
                         pass
                         retries = retries +1
-                    else
-                        raise e
+                    else:
+                        raise Exception('Too many retries connecting to Riak')
             results.append(data_set.rows)
         queryDuration = round((time.time() - queryStart),3)
         totQueries = len(intervals)
@@ -113,8 +113,8 @@ def executeQuery(client, table, asset, start, end, maxInt, expectedPayloadSize, 
                 if 'no response from backend' in e:
                     pass
                     retries = retries +1
-                else
-                    raise e
+                else:
+                    raise Exception('Too many retries connecting to Riak')
             
         queryDuration = round((time.time() - queryStart),3)
         results.append(data_set.rows)
