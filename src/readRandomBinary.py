@@ -18,6 +18,7 @@ from datetime import timedelta
 from random import randrange
 from random import randint
 from riak import RiakClient
+from riak import RiakException
 
 cfg = RawConfigParser()
 PRECISION = 1000.0
@@ -91,8 +92,9 @@ def executeQuery(client, table, asset, start, end, maxInt, expectedPayloadSize, 
                 try:
                     data_set = client.ts_query(table, fmt)
                     done = True
-                except RiakException as e:
+                except Exception as e:
                     pass
+                    time.sleep(3)
                     if 'no response from backend' in e:
                         retries = retries +1
                     else:
@@ -111,8 +113,9 @@ def executeQuery(client, table, asset, start, end, maxInt, expectedPayloadSize, 
             try:
                 data_set = client.ts_query(table, fmt)
                 done = True
-            except RiakException as e:
+            except Exception as e:
                 pass
+                time.sleep(3)
                 if 'no response from backend' in e:
                     retries = retries +1
                 else:
