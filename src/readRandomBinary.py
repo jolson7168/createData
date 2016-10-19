@@ -79,19 +79,43 @@ def executeQuery(client, table, asset, start, end, maxInt, expectedPayloadSize, 
     intervals = []
     results = []
     totQueries = 0
+    retries = 0
     if (end - start) >= maxInt:
         queryStart = time.time()
         intervals = splitIntervals(start, end, maxInt)
         for interval in intervals:
-            fmt = "select data from {3} where time >= {0} and time < {1} and assetid ='{2}'".format(interval[0], interval[1], asset, table)
-            data_set = client.ts_query(table, fmt)
+            fmt = "select data from {3} where time >= {0} and time < {1} and id ='{2}'".format(interval[0], interval[1], asset, table)
+            done = False
+            retries = 0
+            while (not done) and (retries <=5):
+                try:
+                    data_set = client.ts_query(table, fmt)
+                    done = True
+                except RiakException as e:
+                    if 'no response from backend' in e:
+                        pass
+                        retries = retries +1
+                    else
+                        raise e
             results.append(data_set.rows)
         queryDuration = round((time.time() - queryStart),3)
         totQueries = len(intervals)
     else:
-        fmt = "select data from {3} where time >= {0} and time < {1} and assetid ='{2}'".format(start, end, asset, table)
+        fmt = "select data from {3} where time >= {0} and time < {1} and id ='{2}'".format(start, end, asset, table)
         queryStart = time.time()
-        data_set = client.ts_query(table, fmt)
+        done = False
+        retries = 0
+        while (not done) and (retries <=5):
+            try:
+                data_set = client.ts_query(table, fmt)
+                done = True
+            except RiakException as e:
+                if 'no response from backend' in e:
+                    pass
+                    retries = retries +1
+                else
+                    raise e
+            
         queryDuration = round((time.time() - queryStart),3)
         results.append(data_set.rows)
         totQueries = 1
@@ -103,7 +127,11 @@ def executeQuery(client, table, asset, start, end, maxInt, expectedPayloadSize, 
         status = 'Pass!'
     else:
         status = 'Fail!'
-    print('{0},{1},{2},{3},{4},{5},{6}'.format(status, expectedPayloadSize, tot, fromUnixTime(start),fromUnixTime(end), queryDuration, totQueries), file = destination)
+    if retries == 0:
+        print('{0},{1},{2},{3},{4},{5},{6}'.format(status, expectedPayloadSize, tot, fromUnixTime(start),fromUnixTime(end), queryDuration, totQueries), file = destination)
+    else:
+        print('{0},{1},{2},{3},{4},{5},{6},{7}'.format(status, expectedPayloadSize, tot, fromUnixTime(start),fromUnixTime(end), queryDuration, totQueries, retries), file =
+ destination)
 
 
 def processRecord(id1, start, end, data):
@@ -112,7 +140,7 @@ def processRecord(id1, start, end, data):
 
 
 def readRiakTS(client, tableName, startTime, endTime, assetID, expected, logger):
-    qry = "SELECT data FROM {0} WHERE time >= {1} and time < {2} and assetid = '{3}'".format(tableName, startTime, endTime, assetID)
+    qry = "SELECT data FROM {0} WHERE time >= {1} and time < {2} and id = '{3}'".format(tableName, startTime, endTime, assetID)
     try:   
         startQTime = time.time()
         data_set = client.ts_query(tableName, qry)
