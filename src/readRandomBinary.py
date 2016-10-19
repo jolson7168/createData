@@ -18,7 +18,6 @@ from datetime import timedelta
 from random import randrange
 from random import randint
 from riak import RiakClient
-from riak import RiakException
 
 cfg = RawConfigParser()
 PRECISION = 1000.0
