@@ -87,36 +87,39 @@ def executeQuery(client, table, asset, start, end, maxInt, expectedPayloadSize, 
             fmt = "select data from {3} where time >= {0} and time < {1} and id ='{2}'".format(interval[0], interval[1], asset, table)
             done = False
             retries = 0
-            while (not done) and (retries <=5):
+            while (not done) and (retries <5):
                 try:
                     data_set = client.ts_query(table, fmt)
                     done = True
                 except RiakException as e:
+                    pass
                     if 'no response from backend' in e:
-                        pass
                         retries = retries +1
                     else:
-                        raise Exception('Too many retries connecting to Riak')
+                        raise Exception('Error connecting to Riak: {0}'.format(e))
             results.append(data_set.rows)
         queryDuration = round((time.time() - queryStart),3)
+        if retries == 5:
+            raise Exception('Too many riak read retires!')
         totQueries = len(intervals)
     else:
         fmt = "select data from {3} where time >= {0} and time < {1} and id ='{2}'".format(start, end, asset, table)
         queryStart = time.time()
         done = False
         retries = 0
-        while (not done) and (retries <=5):
+        while (not done) and (retries <5):
             try:
                 data_set = client.ts_query(table, fmt)
                 done = True
             except RiakException as e:
+                pass
                 if 'no response from backend' in e:
-                    pass
                     retries = retries +1
                 else:
-                    raise Exception('Too many retries connecting to Riak')
-            
+                    raise Exception('Error connecting to Riak: {0}'.format(e))
         queryDuration = round((time.time() - queryStart),3)
+        if retries == 5:
+            raise Exception('Too many riak read retires!')
         results.append(data_set.rows)
         totQueries = 1
     tot = 0
