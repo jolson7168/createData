@@ -1,0 +1,60 @@
+{
+    "scenarios": [
+                {"server": {"ip":"<ip address>","port":8087, "login":"<login>", "password":"<password>"},
+                 "name":"eventsTest4_1min",
+                 "dataSource":{"table":"eventsTest4","quantum":{"num":24,"units":"hours", "maxPartitions":5,"precision":1000.0}},
+                 "id":"asset101",
+                 "interval": {"value":1, "units":"minutes", "startTime":"2016-01-01T00:00:00.000Z", "endTime":"2017-01-01T00:00:00.000Z",
+                              "expected":{"value":122880, "units":"bytes"}}
+                },
+                {"server": {"ip":"<ip address>","port":8087, "login":"<login>", "password":"<password>"},
+                 "name":"eventsTest4_2min",
+                 "dataSource":{"table":"eventsTest4","quantum":{"num":24,"units":"hours", "maxPartitions":5,"precision":1000.0}},
+                 "id":"asset101",
+                 "interval": {"value":2, "units":"minutes", "startTime":"2016-01-01T00:00:00.000Z", "endTime":"2017-01-01T00:00:00.000Z",
+                              "expected":{"value":245760, "units":"bytes"}}
+                },
+                {"server": {"ip":"<ip address>","port":8087, "login":"<login>", "password":"<password>"},
+                 "name":"eventsTest4_10min",
+                 "dataSource":{"table":"eventsTest4","quantum":{"num":24,"units":"hours", "maxPartitions":5,"precision":1000.0}},
+                 "id":"asset101",
+                 "interval": {"value":10, "units":"minutes", "startTime":"2016-01-01T00:00:00.000Z", "endTime":"2017-01-01T00:00:00.000Z",
+                              "expected":{"value":1228800, "units":"bytes"}}
+                },
+                {"server": {"ip":"<ip address>","port":8087, "login":"<login>", "password":"<password>"},
+                 "name":"eventsTest4_1hr",
+                 "dataSource":{"table":"eventsTest4","quantum":{"num":24,"units":"hours", "maxPartitions":5,"precision":1000.0}},
+                 "id":"asset101",
+                 "interval": {"value":1, "units":"hours", "startTime":"2016-01-01T00:00:00.000Z", "endTime":"2017-01-01T00:00:00.000Z",
+                              "expected":{"value":7372800, "units":"bytes"}}
+                },
+                {"server": {"ip":"<ip address>","port":8087, "login":"<login>", "password":"<password>"},
+                 "name":"eventsTest4_4hr",
+                 "dataSource":{"table":"eventsTest4","quantum":{"num":24,"units":"hours", "maxPartitions":5,"precision":1000.0}},
+                 "id":"asset101",
+                 "interval": {"value":4, "units":"hours", "startTime":"2016-01-01T00:00:00.000Z", "endTime":"2017-01-01T00:00:00.000Z",
+                              "expected":{"value":29491200, "units":"bytes"}}
+                },
+                {"server": {"ip":"<ip address>","port":8087, "login":"<login>", "password":"<password>"},
+                 "name":"eventsTest4_6hr",
+                 "dataSource":{"table":"eventsTest4","quantum":{"num":24,"units":"hours", "maxPartitions":5,"precision":1000.0}},
+                 "id":"asset101",
+                 "interval": {"value":6, "units":"hours", "startTime":"2016-01-01T00:00:00.000Z", "endTime":"2017-01-01T00:00:00.000Z",
+                              "expected":{"value":44236800, "units":"bytes"}}
+                },
+                {"server": {"ip":"<ip address>","port":8087, "login":"<login>", "password":"<password>"},
+                 "name":"eventsTest4_12hr",
+                 "dataSource":{"table":"eventsTest4","quantum":{"num":24,"units":"hours", "maxPartitions":5,"precision":1000.0}},
+                 "id":"asset101",
+                 "interval": {"value":12, "units":"hours", "startTime":"2016-01-01T00:00:00.000Z", "endTime":"2017-01-01T00:00:00.000Z",
+                              "expected":{"value":88473600, "units":"bytes"}}
+                },
+                {"server": {"ip":"<ip address>","port":8087, "login":"<login>", "password":"<password>"},
+                 "name":"eventsTest4_1d",
+                 "dataSource":{"table":"eventsTest4","quantum":{"num":24,"units":"hours", "maxPartitions":5,"precision":1000.0}},
+                 "id":"asset101",
+                 "interval": {"value":1, "units":"days", "startTime":"2016-01-01T00:00:00.000Z", "endTime":"2017-01-01T00:00:00.000Z",
+                              "expected":{"value":176947200, "units":"bytes"}}
+                }
+   ]
+}
