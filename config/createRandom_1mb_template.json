@@ -1,0 +1,18 @@
+{
+    "comment":"scenario used to create random binary data.",
+    "target":{"ip":"<ip address>","port":"<port>","login":"<login>","password":"<password>"},
+    "printOnly":"False",
+    "scenarios": [{
+          "subjectIDType":"asset",
+          "startID":100,
+          "startDate":"2016-01-01T00:00:00.00000Z",
+          "endDate":"2016-01-02T23:59:59.99999Z",
+          "numTargets":1,
+          "frequency": 1,
+          "frequency units": "minutes",
+          "payload size": 1,
+          "payload units": "mb",
+          "routing":{"exchange":"test01","routingKey":"1mb"}
+         }
+]
+}
