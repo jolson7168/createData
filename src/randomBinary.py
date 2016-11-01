@@ -61,6 +61,65 @@ def getCmdLineParser():
 
     return parser
 
+def getPayloadData(timeAmount, timeUnits, payloadSize, payloadUnits, payloadRate, payloadRateUnits):
+
+    # Finish this!    
+    if timeUnits == payloadRateUnits:
+        return round(((float(timeAmount) / float(payloadRate)) * payloadSize),2)
+    #else:
+            
+
+def  getPayloadFrequency(freqProfile):
+    # timeOffset, timeOffsetUnits, payloadSize, payloadUnits
+    if 'frequency' in freqProfile:
+        return freqProfile['frequency'],freqProfile['frequency units'], freqProfile['payload size'], freqProfile['payload units']  
+    else:
+        random = randint(freqProfile['frequencyMin'],freqProfile['frequencyMax'])
+        payloadSize = getPayloadData(random, freqProfile['frequency units'], freqProfile['payload size'], freqProfile['payload units'], freqProfile['payload rate'], freqProfile['payload rate units'])
+        return random, freqProfile['frequency units'], payloadSize, freqProfile['payload units'] 
+
+def getPayload(frequencyRules):
+    if len(frequencyRules) == 1:
+        return getPayloadFrequency(frequencyRules[0])
+    else:
+        random = randint(1,100)
+        for eachFreq in frequencyRules:
+            if random >= eachFreq['probability'][0] and random <= eachFreq['probability'][1]:
+                return getPayloadFrequency(eachFreq)
+
+def swapTwo(payloads, target, distance):
+    temp = payloads[target]
+    temp2 = payloads[distance]
+    temp['orig pos'] = target
+    temp2['orig pos'] = distance
+    temp['new pos'] = distance
+    temp2['new pos'] = target
+    if 'num times swapped' in temp:
+        temp['num times swapped'] = temp['num times swapped'] +1
+    else:
+        temp['num times swapped'] = 1
+    if 'num times swapped' in temp2:
+        temp2['num times swapped'] = temp2['num times swapped'] +1
+    else:
+        temp2['num times swapped'] = 1
+    payloads[target] = temp2
+    payloads[distance]= temp
+    return payloads
+
+
+def shuffleScenario(shuffleScenario, payloads):
+    for x in range(0, len(payloads)-1):
+        randomNum = randint(1, 100)
+        if randomNum <= shuffleScenario['probability']:
+            randomShift = randint(-1 * shuffleScenario['distance'], shuffleScenario['distance'])
+            if randomShift <= x :
+                payloads = swapTwo(payloads, x, x + abs(randomShift)) 
+            elif (randomShift + x) > len(payloads):
+                payloads = swapTwo(payloads, x, x + randomShift * -1)
+            else:
+                payloads = swapTwo(payloads, x, x + randomShift)
+
+    return payloads
 
 
 def executeScenario(channel, scenario, logger):
@@ -83,24 +142,33 @@ def executeScenario(channel, scenario, logger):
                 xS = '{0}'.format(startAt+x)
             subjectID = '{0}{1}'.format(scenario["subjectIDType"], xS)
         now = startDate
+        payloads = []
+        pos = 0
         while now <= endDate:
             timeStart = now
-            if scenario['frequency units'] == 'seconds':
-                timeEnd = timeStart + timedelta(seconds = scenario['frequency'])
-            elif scenario['frequency units'] == 'minutes':
-                timeEnd = timeStart + timedelta(minutes = scenario['frequency'])
-            elif scenario['frequency units'] == 'hours':
-                timeEnd = timeStart + timedelta(hours = scenario['frequency'])
-            elif scenario['frequency units'] == 'days':
-                timeEnd = timeStart + timedelta(days = scenario['frequency'])
+            timeOffset, timeOffsetUnits, payloadSize, payloadUnits = getPayload(scenario['frequency'])
+            if timeOffsetUnits == 'seconds':
+                timeEnd = timeStart + timedelta(seconds = timeOffset)
+            elif timeOffsetUnits == 'minutes':
+                timeEnd = timeStart + timedelta(minutes = timeOffset)
+            elif timeOffsetUnits == 'hours':
+                timeEnd = timeStart + timedelta(hours = timeOffset)
+            elif timeOffsetUnits == 'days':
+                timeEnd = timeStart + timedelta(days = timeOffset)
             now = timeEnd
-            #print('{0},{1}'.format(timeStart.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),timeEnd.strftime('%Y-%m-%dT%H:%M:%S.%fZ')))
-            payload = {'id':subjectID, 'start':timeStart.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), 'end':timeEnd.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), 'size':int(scenario['payload size']), 'sizeUnits':scenario['payload units']}
+            payloads.append({'id':subjectID, 'start':timeStart.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), 'end':timeEnd.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), 'size':payloadSize, 'sizeUnits':payloadUnits,'pos':pos})
+            pos = pos +1
+            
+
+        if 'shuffle' in scenario:
+            payloads = shuffleScenario(scenario['shuffle'], payloads)
+        pos = 0     
+        for payload in payloads:
             if channel != None:
                 dumpToRabbit(channel, scenario["routing"]["exchange"], scenario["routing"]["routingKey"], json.dumps(payload))
             else:
-                print(json.dumps(payload))
- 
+                print('{0}: {1}'.format(pos, json.dumps(payload)))
+                pos = pos + 1
 
 
 def main(argv):

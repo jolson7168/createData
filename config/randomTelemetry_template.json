@@ -1,0 +1,53 @@
+{
+    "comment":"scenario used to create random binary data.",
+    "target":{"ip":"<ip address>", "port":"<port>","login":"<login>","password":"<password>"},
+    "printOnly":"True",
+    "scenarios": [
+            {
+              "subjectIDType":"asset",
+              "startID":100,
+              "startDate":"2016-01-01T00:00:00.00000Z",
+              "endDate":"2016-12-31T23:59:59.99999Z",
+              "numTargets":1,
+              "shuffle":{
+                "probability":10,
+                "distance":6
+              },
+              "frequency": [ {
+                    "frequency": 60,
+                    "frequency units": "seconds",
+                    "payload size": 8.53,
+                    "payload units": "mb",
+                    "probability": [1,80]},
+                {
+                    "frequencyMax": 60,
+                    "frequencyMin": 10,
+                    "frequency units": "seconds",
+                    "payload size": 8.53,
+                    "payload units": "mb",
+                    "payload rate": 60,
+                    "payload rate units": "seconds",
+                    "probability": [81,90]},
+                {
+                    "frequencyMax": 300,
+                    "frequencyMin": 60,
+                    "frequency units": "seconds",
+                    "payload size": 8.53,
+                    "payload units": "mb",
+                    "payload rate": 60,
+                    "payload rate units": "seconds",
+                    "probability": [91,95]},
+                {
+                    "frequencyMax": 300,
+                    "frequencyMin": 10,
+                    "frequency units": "seconds",
+                    "payload size": 0,
+                    "payload units": "mb",
+                    "payload rate": 60,
+                    "payload rate units": "seconds",
+                    "probability": [96,100]}
+              ]
+
+            } 
+    ]
+}
